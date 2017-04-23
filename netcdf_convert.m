@@ -8,15 +8,20 @@ cd(data_path);
 x = spins_reader('xgrid');
 y = spins_reader('ygrid');
 z = spins_reader('zgrid');
+
+x1D=squeeze(x(:,1,1));
+y1D=squeeze(y(1,:,1));
+z1D=squeeze(z(1,1,:));
+
 gdpar = spins_gridparams('vector',false); split_gdpar;
 par2var(params);
 
 
 numouts = 29;
 
-myfields = {'rho' 'u' 'ux' 'uy' 'uz' ...
-    'v' 'vx' 'vy' 'vz' ...
-    'w' 'wx' 'wy' 'wz'};
+myfields = {'rho' 'u' 'u_x' 'u_y' 'u_z' ...
+    'v' 'v_x' 'v_y' 'v_z' ...
+    'w' 'w_x' 'w_y' 'w_z'};
 dt = plot_interval;
 
 for ii=0:numouts
@@ -30,7 +35,7 @@ for ii=0:numouts
     
     for jj = 1:length(myfields)
         
-        
+        disp([(myfields{jj}) ' on output ' num2str(ii)]) 
         dummy = spins_reader((myfields{jj}),ii);
         mybutt = netcdf.defVar(ncid,(myfields{jj}),'NC_FLOAT',...
             [x_dimID y_dimID z_dimID t_dimID]);
@@ -43,11 +48,11 @@ for ii=0:numouts
     zID = netcdf.defVar(ncid,'z','NC_FLOAT',z_dimID);
     timeID = netcdf.defVar(ncid,'time','NC_FLOAT',t_dimID);
     
-    netcdf.putVar(ncid,xID,x);
-    netcdf.putVar(ncid,yID,y);
-    netcdf.putVar(ncid,zID,z);
+    netcdf.putVar(ncid,xID,x1D);
+    netcdf.putVar(ncid,yID,y1D);
+    netcdf.putVar(ncid,zID,z1D);
     netcdf.putVar(ncid,timeID,ii*dt);
     
     netcdf.close(ncid);
-    movefile(filename,save_path);
+%    movefile(filename,save_path);
 end
