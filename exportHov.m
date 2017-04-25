@@ -4,12 +4,14 @@
 %migrated over from export_pics.m
 %Make hovmoller pictures
 %========================
+clear all
+close all
 
 
 %MAC PATH=============================================================
-diagpath = strcat('/Volumes/','Ext. Drive','/seiche2D/Notes');
-savepath = strcat('/Volumes/','Ext. Drive','/seiche2D/Notes/');
-datapath = strcat('/Volumes/','Ext. Drive','/seiche2D/2048x1024/Amp0825/h005/');
+diagram_path = strcat('/Volumes/','Ext. Drive','/Data');
+savepath = strcat('/Volumes/','Ext. Drive','/Notes/Pictures/');
+datapath = strcat('/Volumes/','Ext. Drive','/seiche2D/M5');
 %=====================================================================
 
 %WINDOWS PATH=========================================================
@@ -22,13 +24,17 @@ datapath = strcat('/Volumes/','Ext. Drive','/seiche2D/2048x1024/Amp0825/h005/');
 %Make varsum, mixsum, KEsum, rhosum, uz hovmoller plots
 %===================
 
+mylabelfontsize = 15;
+mytickfontsize = 12;
+mylabelxpos = 0.02;
+mylabelzpos = 0.05;
 
 
 %% 
 %==================
 %Control Run
 %==================
-cd(diagpath)
+cd(diagram_path)
 load control.mat
 mylabelfontsize = 15;
 mytickfontsize = 12;
@@ -259,6 +265,7 @@ set(hfig4,'PaperPositionMode','Auto',...
 hfig5 = figure(5);
 cd(datapath);
 
+timestamp = [100 114 140 320]; %output numbers of the timestamps
 
 gdpar = spins_gridparams('vector',false); split_gdpar; par2var(params);
 x = xgrid_reader();
@@ -267,7 +274,7 @@ xticks = Lx*[0 .25 .5 .75 1];
 yticks = Lz*[.25 .5 .75 1];
 
 
-rho = spins_reader_new('rho',58);
+rho = spins_reader_new('rho',timestamp(1));
 ax1 = subplot(4,1,1);
 pcolor(x,z,rho), shading interp
 set(gca,'fontw','b',...
@@ -281,7 +288,7 @@ ta = text(mylabelxpos,mylabelzpos,'(a)',...
 set(ta,'Visible','on');
 
 
-rho = spins_reader_new('rho',105);
+rho = spins_reader_new('rho',timestamp(2));
 ax2 = subplot(4,1,2);
 pcolor(x,z,rho), shading interp
 set(gca,'fontw','b',...
@@ -295,7 +302,7 @@ tb = text(mylabelxpos,mylabelzpos,'(b)',...
 set(tb,'Visible','on');
 
 
-rho = spins_reader_new('rho',350);
+rho = spins_reader_new('rho',timestamp(3));
 ax3 = subplot(4,1,3);
 pcolor(x,z,rho), shading interp
 set(gca,'fontw','b',...
@@ -309,7 +316,7 @@ tc = text(mylabelxpos,mylabelzpos,'(c)',...
 set(tc,'Visible','on');
 
 
-rho = spins_reader_new('rho',440);
+rho = spins_reader_new('rho',timestamp(4));
 ax4 = subplot(4,1,4);
 pcolor(x,z,rho), shading interp
 set(gca,'fontw','b',...
@@ -354,6 +361,8 @@ set(hfig5,'PaperPositionMode','Auto',...
 %=====================
 
 hfig6 = figure(6);
+cd(diagram_path)
+load('M5_spacetime.mat')
 mymaxwidth = max(max(rhosum));
 myminwidth = min(min(rhosum));
 widthtitle = 'Pycnocline Width';
@@ -376,7 +385,7 @@ ts = linspace(0,final_time,numouts+1);
 
 colormap((hot))
 ax1 = subplot(1,3,1);
-pcolor(xx,tt,varsum/mymaxvar), shading interp
+pcolor(xx,tt,varsum'/mymaxvar), shading interp
 caxis([0 1]);
 title(vartitle);
 set(gca,'fontsize',mytickfontsize,'fontw','b',...
@@ -390,7 +399,7 @@ set(te,'Visible','on');
 
 
 ax2 = subplot(1,3,2);
-pcolor(xx,tt,mixsum/mymaxmix), shading interp
+pcolor(xx,tt,mixsum'/mymaxmix), shading interp
 caxis([0 1]);
 title(mixtitle);
 set(gca,'fontsize',mytickfontsize,'fontw','b',...
@@ -404,7 +413,7 @@ set(tf,'Visible','on');
 
 
 ax3 = subplot(1,3,3);
-pcolor(xx,tt,rhosum/mymaxwidth), shading interp
+pcolor(xx,tt,rhosum'/mymaxwidth), shading interp
 caxis([0 1]);
 title(widthtitle);
 set(gca,'fontsize',mytickfontsize,'fontw','b',...
@@ -417,13 +426,13 @@ tg = text(mylabelxpos,mylabelzpos,'(g)',...
 set(tg,'Visible','on');
 
 for ii = 1:3
-hline1 = line(subplot(1,3,ii),[0 Lx], [tt(58,1) tt(58,1)],...
+hline1 = line(subplot(1,3,ii),[0 Lx], [tt(timestamp(1),1) tt(timestamp(1),1)],...
     'Color','w','linewidth',1,'linestyle','-'); %reference line at 11s
-hline2 = line(subplot(1,3,ii),[0 Lx], [tt(105,1) tt(105,1)],...
+hline2 = line(subplot(1,3,ii),[0 Lx], [tt(timestamp(2),1) tt(timestamp(2),1)],...
     'Color','w','linewidth',1,'linestyle','--'); %reference line at 21s
-hline3 = line(subplot(1,3,ii),[0 Lx], [tt(350,1) tt(350,1)],...
+hline3 = line(subplot(1,3,ii),[0 Lx], [tt(timestamp(3),1) tt(timestamp(3),1)],...
     'Color','w','linewidth',1,'linestyle',':'); %reference line at 70s
-hline4 = line(subplot(1,3,ii),[0 Lx], [tt(440,1) tt(440,1)],...
+hline4 = line(subplot(1,3,ii),[0 Lx], [tt(timestamp(4),1) tt(timestamp(4),1)],...
     'Color','w','linewidth',1,'linestyle','-.'); %reference line at 88s
 end
 
@@ -443,19 +452,33 @@ set(hfig6,'PaperPositionMode','Auto',...
 
 %%
 %==================
-%Comparison of the space-time plots over a 50 second time interval
+%Comparison of the space-time plots over a 50 second time interval -- Will
+%do up to 5 plots per figure
 %==================
 close all
-cd(diagpath)
+
+%The user should only have to change the following lines. The path
+%specifies where the data is. mytitles is a cell array where entries MUST
+%match the titles of the data in the .mat file specified in mydata
+%=======================================================================
+diagram_path = strcat('/Volumes/','Ext. Drive','/Data');
+mydata = {'L5_spacetime.mat' 'M5_spacetime.mat' 'S5_spacetime.mat'};
+mytitles = {'variability' 'rhosum'};
+scale = 1; %normalization constant for each of the spacetime plots
+%=======================================================================
+
+
+
+
+cd(diagram_path)
 mylabelfontsize = 15;
 mytickfontsize = 12;
 mylabelxpos = 0.02;
 mylabelzpos = 0.05;
 
 
-mytitles = {'Variability' 'Mixing' 'PWF'};
-mydata = {'control_L5.mat' 'control_M5.mat' 'control_S5.mat'};
-%mydata = {'control_L5.mat' 'n2.mat' 'n4.mat' 'n5.mat'}; 
+%Will do up to 5 plots per figure
+myfields = cell(1,length(mytitles));
 myannos = {'(i)' '(ii)' '(iii)' '(iv)' '(v)'};
 
 
@@ -466,24 +489,11 @@ for kk = 1:length(myfigs)
     myfigs{kk} = figure(mysize(kk));
     set(myfigs{kk},'Name',(mytitles{kk}));
 end
-  
-
-
-load('control_L5.mat');
-maxvar = max(max(varsum/Nz));
-maxwidth = max(max(rhosum));
-maxmix = max(max(mixsum/Nz));
-
-mymax = {maxvar maxmix maxwidth};
 
 for ii = 1:length(mydata)
     load((mydata{ii}));
-    rhosum = rhosum'; %The data is already normalized over Nz
-    varsum = varsum'/Nz;
-    mixsum = mixsum'/Nz;
-    uz = uz'/Nz;
-    
-    final_time = 50;
+
+    %final_time = 50;
     
     numticks = 5;
     numouts = final_time/plot_interval;
@@ -492,13 +502,19 @@ for ii = 1:length(mydata)
     ts = linspace(0,final_time,numouts+1);
 
     [xx,tt] = meshgrid(xs,ts);
-    myfields = {varsum(1:numouts+1,:) mixsum(1:numouts+1,:) rhosum(1:numouts+1,:)};
+ 
+    for ll = 1:length(mytitles);
+        if ~exist(mytitles{ll})
+            error('Field does not exist')
+        end
+        dummy = eval((mytitles{ll}));
+        myfields{ll} = (dummy(:,1:numouts+1)/Nz)';
+
+    end
     
     for jj = 1:length(myfigs)
         figure(myfigs{jj});
-        scale = mymax{jj};
-        %scale = max(max(myfields{jj}));
-        plotme = myfields{jj}/scale;
+        plotme = scale*(myfields{jj});
         subplot(1,length(mydata),ii)
         pcolor(xx,tt,plotme), shading interp, caxis([0 1])
         

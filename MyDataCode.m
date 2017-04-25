@@ -1,21 +1,15 @@
 clear
 close all
-%%%%%%%%%%% Most Recent Upload to SHARCNET: MARCH 23,2017 %%%%%%%%%%%%%%%%
-savepath = '/work/a2grace';
-
+savepath = '/work/a2grace/Data/';
+datapath = '/scratch/kglamb/a2grace/L10/';
+filename = 'L10_tight.mat';
+cd(datapath)
     %Read in parameters from spins.conf
     %This requires a buch of David's functions
     %It's just easiest to import the SPINSmatlab folder from Boogaloo
     %All the functions are there
     gdpar = spins_gridparams('vector',false); split_gdpar;
-    Lx = params.Lx;
-    Lz = params.Lz;
-    Nx = params.Nx;
-    Nz = params.Nz;
-    dx = params.dx;
-    dz = params.dz;
-    plot_interval = params.plot_interval;
-    final_time = params.final_time;
+    par2var(params);
     
     numchains = 8; %The number of chains across the domain is actually numchains-1
     numdata = 16; %the number of sensors(?) on each chain +1
@@ -26,7 +20,7 @@ savepath = '/work/a2grace';
     %so it must be rounded)
     datalocations = round(datalocations/dz); %The grid point of each sensor on each chain
     %(again typically not a whole number, so it must be rounded)
-    
+    %% 
     numouts = final_time/plot_interval;
     maxouts = numouts;
     data_array = zeros(numdata-1,maxouts+1); %Allocate the memory for each data array
@@ -40,9 +34,9 @@ savepath = '/work/a2grace';
     for ii = 0:maxouts
         disp(['Current output: ' num2str(ii)])
         %Read in the velocity and rho data
-        u = u_reader(ii);
-        w = w_reader(ii);
-        rho = rho_reader(ii);
+        u = spins_reader('u',ii);
+        w = spins_reader('w',ii);
+        rho = spins_reader('rho',ii);
         %Evauluate each field at the chain and data locations
         u = u(chainlocations,datalocations);
         w = w(chainlocations,datalocations);
@@ -71,7 +65,7 @@ savepath = '/work/a2grace';
     disp('Exit successful')
     
     cd(savepath)
-    save('data.mat','-struct','data');
+    save(filename,'-struct','data');
    
 
     
