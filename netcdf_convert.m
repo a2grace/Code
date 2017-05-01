@@ -17,7 +17,7 @@ gdpar = spins_gridparams('vector',false); split_gdpar;
 par2var(params);
 
 
-numouts = 29;
+numouts = 0;
 
 myfields = {'rho' 'u' 'u_x' 'u_y' 'u_z' ...
     'v' 'v_x' 'v_y' 'v_z' ...
@@ -38,7 +38,7 @@ for ii=0:numouts
         disp([(myfields{jj}) ' on output ' num2str(ii)]) 
         dummy = spins_reader((myfields{jj}),ii);
         mybutt = netcdf.defVar(ncid,(myfields{jj}),'NC_FLOAT',...
-            [x_dimID y_dimID z_dimID t_dimID]);
+            [x_dimID y_dimID z_dimID]);
         netcdf.putVar(ncid,mybutt,dummy);
 
     end
