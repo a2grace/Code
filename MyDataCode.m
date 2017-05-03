@@ -1,8 +1,8 @@
 clear
 close all
-savepath = '/work/a2grace/Data/';
-datapath = '/scratch/kglamb/a2grace/L10/';
-filename = 'L10_tight.mat';
+savepath = '/work/a2grace/data_for_Justin/';
+datapath = '/scratch/kglamb/a2grace/L25/';
+filename = 'L25_tight.mat';
 cd(datapath)
     %Read in parameters from spins.conf
     %This requires a buch of David's functions
