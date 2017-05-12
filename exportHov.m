@@ -262,14 +262,14 @@ mytitles = {'M5' 'L5'};
 mypaths = {M5path L5path};
 mytimes = {M5outs L5outs};
 myfigs = cell(1,length(mytimes));
-mysize = linspace(1,length(myfigs),length(myfigs));
+num_figs = linspace(1,length(myfigs),length(myfigs));
 M5pos = [.34 .07 .3 .1];
 L5pos = [.4 .07 .2 .1];
 %=================================================
 
 
 for kk = 1:length(myfigs)
-    myfigs{kk} = figure(mysize(kk));
+    myfigs{kk} = figure(num_figs(kk));
     set(myfigs{kk},'Name',(mytitles{kk}));
 end
 
@@ -528,7 +528,7 @@ close all
 %=======================================================================
 datapath = strcat('/Volumes/','Ext. Drive','/Data');
 mydata = {'L5_spacetime.mat' 'M5_spacetime.mat' 'S5_spacetime.mat'};
-mytitles = {'variability' 'mixsum' 'bob'};
+mytitles = {'variability' 'mixsum'};
 scale = 1; %normalization constant for each of the spacetime plots
 mylabelfontsize = 15;
 mytickfontsize = 12;
@@ -554,17 +554,17 @@ myannos = {'(i)' '(ii)' '(iii)' '(iv)' '(v)'};
 
 
 myfigs = cell(1,length(mytitles));
-mysize = linspace(1,length(mytitles),length(mytitles));
+num_figs = linspace(1,length(mytitles),length(mytitles));
 
 for kk = 1:length(myfigs)
-    myfigs{kk} = figure(mysize(kk));
+    myfigs{kk} = figure(num_figs(kk));
     set(myfigs{kk},'Name',(mytitles{kk}));
 end
 
 for ii = 1:length(mydata)
     load((mydata{ii}));
 
-    %final_time = 50;
+    final_time = 50;
     
     numticks = 5;
     numouts = final_time/plot_interval;
@@ -612,7 +612,7 @@ for ii = 1:length(mydata)
 end
  
 for kk = 1:length(myfigs)
-    figure(mysize(kk));
+    figure(num_figs(kk));
     colormap hot
 
     set(myfigs{kk},'NextPlot','add');
@@ -637,6 +637,146 @@ for kk = 1:length(myfigs)
         'PaperUnits','Inches',...
         'PaperSize',[pos(3) pos(4)*1.4])
 end 
+
+%%
+%==========
+%Basic sates of the perturbed cases
+%==========
+
+%This code makes a contour plots showing the basic states of the perturbed
+%cases. The only two contours are rhohigh and rholow.
+
+%Going to make a 3 row by 2 column figure to show all the states. One
+%column will be Ln* and the other column will be Sn*
+
+%Background state
+%psi = @(z_0,eta_0,L,eps,n,x) z_0 + eta_0*cos(pi*x/L) + eps*eta_0*cos(n*pi*x/L);
+
+
+Ln2path = strcat('/Volumes/','Ext. Drive','/seiche2D/Ln2');
+Ln4path = strcat('/Volumes/','Ext. Drive','/seiche2D/Ln4');
+Ln5path = strcat('/Volumes/','Ext. Drive','/seiche2D/Ln5');
+
+Sn2path = strcat('/Volumes/','Ext. Drive','/seiche2D/Sn2');
+Sn4path = strcat('/Volumes/','Ext. Drive','/seiche2D/Sn4');
+Sn5path = strcat('/Volumes/','Ext. Drive','/seiche2D/Sn5');
+
+control_eta_0 = 0.0825;
+psi = @(z_0,eta_0,Lx,da,n,x) z_0 + eta_0*cos(pi*x/Lx) + da*eta_0*cos(n*pi*x/Lx);
+myannos = {'(i)' '(ii)' '(iii)' '(iv)' '(v)' '(vi)'};
+mypaths = {Ln2path Ln4path Ln5path Sn2path Sn4path Sn5path};
+hfig = figure();
+for ii = 1:length(mypaths)
+    cd(mypaths{ii})
+    gdpar = spins_gridparams('vector', false); split_gdpar; 
+    par2var(params);
+    par2var(gd);
+    subplot(2,3,ii)
+    
+    plot(x,psi(z_0,eta_0,Lx,da,n,x),'k','Linewidth',2.5)
+    hold on
+    plot(x,psi(z_0,control_eta_0,Lx,0,0,x),'Color',[1 0 0 .5],...
+        'Linewidth',2.5);
+    
+    text(mylabelxpos,mylabelzpos,(myannos{ii}),...
+        'Units', 'Normalized', ...
+        'VerticalAlignment', 'bottom', 'HorizontalAlignment','left',...
+        'color','k','fontsize',mylabelfontsize,'fontweight','bold'); 
+    
+    set(gca,'fontsize',mytickfontsize,'fontw','b',...
+           'XLim',[min_x Lx],'YLim',[min_z Lz],...
+           'XTick',Lx*(0:1/4:1),'YTick',Lz*(0:1/5:1)) 
+    grid on
+    
+    if ii == 1 
+        set(gca,'Xticklabel',[])
+        
+    elseif ii>1 && ii<4 
+        set(gca,'XTickLabel',[],'YTicklabel',[])
+       
+    elseif ii > 4
+        set(gca,'YTickLabel',[])    
+       
+    end
+
+end
+set(gcf,'NextPlot','add');
+axes;
+set(gca,'Visible','off');
+xlab = xlabel({'x (m)'},'fontsize',mylabelfontsize,'fontw','b');
+zlab = ylabel({'z (m)'},'fontsize',mylabelfontsize,'fontw','b');
+set(xlab,'Visible','on','Position',[.5 -.06 0]);
+set(zlab,'Visible','on','Position',[-.09 .5 0]);
+
+set(hfig,'Units','Inches');
+pos = get(hfig,'Position');
+set(hfig,'PaperPositionMode','Auto',...
+    'PaperUnits','Inches',...
+    'PaperSize',[pos(3) pos(4)])
+
+%%
+
+%========
+%Line plot to compare the pycncline width between cases
+%========
+
+
+close all
+clear 
+%MACPATH=========================================================
+savepath = strcat('/Volumes/','Ext. Drive','/Notes/Pictures/');
+datapath = strcat('/Volumes/','Ext. Drive','/Data');
+%WINPATH=========================================================
+% savepath = 'e:/Notes/Pictures/';
+% datapath = 'e:/Data/';
+%================================================================
+
+cd(datapath)
+
+mylabelfontsize = 15;
+mytickfontsize = 12;
+mylabelxpos = 0.02;
+mylabelzpos = 0.05;
+
+plotskip = 20;
+plotmax = 451;
+load myarea.mat
+
+myplots = {L5 M5 S5};
+legendtitles = {'L5' 'M5' 'S5'};
+mymarkers = {'+' '^' 'x' 's' '*' '.' 'd' 'o' 'n' '>' '<' 'p' 'h'};
+
+hfig = figure();
+hold on
+for ii = 1:length(myplots)    
+    plot(t1(1:plotskip:plotmax),myplots{ii}(1:plotskip:plotmax),...
+        'Linewidth',2,'Color','k','Marker',(mymarkers{ii}),...
+        'MarkerSize',8);
+end
+grid on
+set(gca,'fontsize',mytickfontsize,'fontw','b')
+xlab = xlabel({'t(s)'},'fontsize',mylabelfontsize,'fontweight','bold');
+ylab = ylabel({'Fluid entrained during evolution (m^2)'},...
+    'fontsize',mylabelfontsize,'fontweight','bold');
+
+leg = legend();
+set(leg,'Location','northwest')
+set(xlab,'Visible','on')
+set(ylab,'Visible','on')
+
+set(hfig,'Units','Inches');
+pos = get(hfig,'Position');
+set(hfig,'PaperPositionMode','Auto',...
+    'PaperUnits','Inches',...
+    'PaperSize',[pos(3) pos(4)])
+
+
+
+
+
+
+
+
 
 
 
