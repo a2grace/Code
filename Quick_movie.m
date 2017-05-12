@@ -34,12 +34,12 @@ clear; close all;
 %SHARCNET Paths
 %============================================
  save_path = '/work/a2grace/MyMovies/';
- data_path = '/scratch/kglamb/a2grace/L50/';
+ data_path = '/scratch/kglamb/a2grace/L5_salt/';
 %============================================
 % Create a new VideoWriter object (an empty video file). Use whatever format you want,
 % but in my experience MP4 (with H.264 codec) is by far the best. Please stop using AVI.
 cd(data_path);
-hvid = VideoWriter('./L50');
+hvid = VideoWriter('./L5_salt');
 h = get(hvid,'Filename');
 % Full quality, because why not?
 set(hvid,'Quality',100);

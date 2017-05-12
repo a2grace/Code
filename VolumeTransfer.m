@@ -35,7 +35,7 @@ savepath = '/work/a2grace/Data';
 mypaths = {L5 M5 S5 L25 M25 S25 L10 L50 ...
     Ln2 Sn4 Ln5 Sn2 Sn4 Sn5};
 mycases = {'L5' 'M5' 'S5' 'L25' 'M25' 'S25' 'L10' 'L50' ...
-    'Ln2' 'Sn4' 'Ln5' 'Sn2' 'Sn4' 'Sn5'};
+    'Ln2' 'Ln4' 'Ln5' 'Sn2' 'Sn4' 'Sn5'};
 
 for jj = 1:length(mypaths)
     cd((mypaths{jj}))
@@ -50,14 +50,14 @@ for jj = 1:length(mypaths)
     z = zgrid_reader();
     
     imax = final_time/plot_interval;
-    rhoinitial = spins_reader_new('rho',0);
+    rhoinitial = spins_reader('rho',0);
     rhoinitial = (rhoinitial<rhohigh)&(rhoinitial>rholow);
     numboxesinitial = sum(rhoinitial(:));
     area = zeros(1,imax+1);
     
     for ii = 0:imax
         disp(['Output: ' num2str(ii)])
-        rho = spins_reader_new('rho',ii);
+        rho = spins_reader('rho',ii);
         rhoind = (rho<rhohigh)&(rho>rholow);
         numboxes = sum(rhoind(:));
         area(ii+1) = numboxes - numboxesinitial;
