@@ -35,7 +35,7 @@ savepath = '/work/a2grace/Data';
 mypaths = {L5 M5 S5 L25 M25 S25 L10 L50 ...
     Ln2 Sn4 Ln5 Sn2 Sn4 Sn5};
 mycases = {'L5' 'M5' 'S5' 'L25' 'M25' 'S25' 'L10' 'L50' ...
-    'Ln2' 'Sn4' 'Ln5' 'Sn2' 'Sn4' 'Sn5'};
+    'Ln2' 'Ln4' 'Ln5' 'Sn2' 'Sn4' 'Sn5'};
 
 for jj = 1:length(mypaths)
     cd((mypaths{jj}))
