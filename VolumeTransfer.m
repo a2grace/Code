@@ -50,14 +50,14 @@ for jj = 1:length(mypaths)
     z = zgrid_reader();
     
     imax = final_time/plot_interval;
-    rhoinitial = spins_reader_new('rho',0);
+    rhoinitial = spins_reader('rho',0);
     rhoinitial = (rhoinitial<rhohigh)&(rhoinitial>rholow);
     numboxesinitial = sum(rhoinitial(:));
     area = zeros(1,imax+1);
     
     for ii = 0:imax
         disp(['Output: ' num2str(ii)])
-        rho = spins_reader_new('rho',ii);
+        rho = spins_reader('rho',ii);
         rhoind = (rho<rhohigh)&(rho>rholow);
         numboxes = sum(rhoind(:));
         area(ii+1) = numboxes - numboxesinitial;
