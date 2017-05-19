@@ -95,9 +95,9 @@ for jj = 1:length(myfields)
         dummy = even_y_deriv(dummy,[],Lz,[]);
         
             %%%Magnitudes
-            vertical_shear_mag(:,ii+1) = sum(abs(dummy),2); 
+            vertical_shear_mag(:,ii+1) = sum(dummy.^2,2); 
             %%%Events
-            vertical_shear_num(:,ii+1) = sum(abs(dummy)>coeff,2); 
+            vertical_shear_num(:,ii+1) = sum(dummy.^2>coeff^2,2); 
 
 
     end

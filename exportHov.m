@@ -33,14 +33,14 @@ mylabelzpos = 0.05;
 
 
 
-%%
+
 
 hfig = figure();
 cd(diagram_path)
 
 
-mydata = {'L5_spacetime.mat'};
-mytitles = {'variability_mag' 'mix_mag' 'rho_num'};
+mydata = {'L5_spacetime.mat' 'M5_spacetime.mat' 'S5_spacetime.mat'};
+mytitles = {'mix_mag' 'vertical_shear_mag'};
 myfields = cell(1,length(mytitles));
 myannos = {'-' '--' ':' '-.'};
 mylabels = {'(e)' '(f)' '(g)'};
@@ -163,8 +163,8 @@ clear all
 %match the titles of the data in the .mat file specified in mydata
 %=======================================================================
 datapath = strcat('/Volumes/','Ext. Drive','/Data');
-mydata = { 'Ln4_spacetime.mat' 'Ln5_spacetime.mat'};
-mytitles = {'variability_mag' 'mix_mag'};
+mydata = { 'L5_spacetime.mat' 'M5_spacetime.mat'};
+mytitles = {'mix_mag' 'vertical_shear_mag'};
 scale = 1; %normalization constant for each of the spacetime plots
 mylabelfontsize = 15;
 mytickfontsize = 12;
@@ -204,7 +204,7 @@ for ii = 1:length(mydata)
     
     [xx,tt] = meshgrid(xs,ts);
     for ll = 1:length(mytitles);
-        if ~exist(mytitles{ll})
+        if ~exist(mytitles{ll},'var')
             error(strcat('You have a field that may not exist '))
             break;
         end
@@ -216,7 +216,7 @@ for ii = 1:length(mydata)
         figure(myfigs{jj});
         plotme = abs((myfields{jj}))/scale;
         subplot(1,length(mydata),ii)
-        pcolor(xx,tt,plotme), shading interp
+        pcolor(xx,tt,(plotme)), shading interp
         
         if ii == 1
             
